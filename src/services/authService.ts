@@ -2,11 +2,13 @@ import {
     signInAnonymously as firebaseSignInAnonymously,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    signInWithPopup,
+    sendPasswordResetEmail,
     signOut as firebaseSignOut,
     onAuthStateChanged,
     User as FirebaseUser
 } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, googleProvider } from "../firebase";
 import { getUserData, saveUserData } from "./firestoreService";
 import { UserData } from "../types/user";
 
@@ -75,8 +77,51 @@ export const signIn = async (email: string, pass: string) => {
             await saveUserData({ ...userData, lastLoginAt: Date.now() });
         }
         return userData;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error signing in:", error);
+        if (error.code === 'permission-denied') {
+            throw new Error('Firestore permission denied. Please check your security rules.');
+        }
+        throw error;
+    }
+};
+
+export const signInWithGoogle = async () => {
+    try {
+        const credential = await signInWithPopup(auth, googleProvider);
+        const user = credential.user;
+
+        let userData = await getUserData(user.uid);
+        if (!userData) {
+            userData = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName || 'Learner',
+                photoURL: user.photoURL,
+                isAnonymous: false,
+                createdAt: Date.now(),
+                lastLoginAt: Date.now(),
+                lessonProgress: [],
+                xp: 0,
+                gems: 0,
+                streak: 0
+            };
+            await saveUserData(userData);
+        } else {
+            await saveUserData({ ...userData, lastLoginAt: Date.now() });
+        }
+        return userData;
+    } catch (error) {
+        console.error("Error signing in with Google:", error);
+        throw error;
+    }
+};
+
+export const sendPasswordReset = async (email: string) => {
+    try {
+        await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+        console.error("Error sending password reset:", error);
         throw error;
     }
 };
@@ -93,8 +138,14 @@ export const signOut = async () => {
 export const subscribeToAuthChanges = (callback: (user: UserData | null) => void) => {
     return onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
-            const userData = await getUserData(firebaseUser.uid);
-            callback(userData);
+            try {
+                const userData = await getUserData(firebaseUser.uid);
+                callback(userData);
+            } catch (err) {
+                console.error("Error fetching user data in auth change:", err);
+                // Fallback or specific error handling if permissions are missing
+                callback(null);
+            }
         } else {
             callback(null);
         }

@@ -31,13 +31,21 @@ export const saveLesson = async (lesson: Partial<Lesson>) => {
 };
 
 export const getAllLessons = async (): Promise<Lesson[]> => {
-    const querySnapshot = await getDocs(
-        query(collection(db, LESSONS_COLLECTION), orderBy("createdAt", "desc"))
-    );
-    return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    } as Lesson));
+    try {
+        const querySnapshot = await getDocs(
+            query(collection(db, LESSONS_COLLECTION), orderBy("createdAt", "desc"))
+        );
+        return querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        } as Lesson));
+    } catch (error: any) {
+        console.error("Error fetching lessons:", error);
+        if (error.code === 'permission-denied') {
+            throw new Error('Firestore permission denied for lessons. Please check your security rules.');
+        }
+        throw error;
+    }
 };
 
 export const getLessonById = async (id: string): Promise<Lesson | null> => {
@@ -58,11 +66,19 @@ export const saveUserData = async (userData: UserData) => {
 };
 
 export const getUserData = async (uid: string): Promise<UserData | null> => {
-    const docSnap = await getDoc(doc(db, USERS_COLLECTION, uid));
-    if (docSnap.exists()) {
-        return docSnap.data() as UserData;
+    try {
+        const docSnap = await getDoc(doc(db, USERS_COLLECTION, uid));
+        if (docSnap.exists()) {
+            return docSnap.data() as UserData;
+        }
+        return null;
+    } catch (error: any) {
+        console.error("Error fetching user data:", error);
+        if (error.code === 'permission-denied') {
+            throw new Error('Firestore permission denied for user data. Please check your security rules.');
+        }
+        throw error;
     }
-    return null;
 };
 
 export const seedLessons = async () => {

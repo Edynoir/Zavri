@@ -18,6 +18,7 @@ export interface Lesson {
     steps: LessonStep[];
     tags: string[];
     thumbnailUrl?: string;
+    sourceUrl?: string;
 }
 
 export type LessonType = 'Technology' | 'Cooking' | 'Lifestyle' | 'Education';

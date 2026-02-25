@@ -1,11 +1,13 @@
-import { BookOpen, ArrowRight, Sparkles, CheckCircle, Smartphone, Globe } from 'lucide-react'
+import { BookOpen, ArrowRight, Sparkles, CheckCircle, Smartphone, Globe, Moon, Sun } from 'lucide-react'
 
 interface LandingPageProps {
     onStart: () => void;
     onTryFree: () => void;
+    darkMode: boolean;
+    onToggleTheme: () => void;
 }
 
-export function LandingPage({ onStart, onTryFree }: LandingPageProps) {
+export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: LandingPageProps) {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 selection:bg-primary-100 dark:selection:bg-primary-900/30 transition-colors duration-500">
             {/* Nav */}
@@ -18,6 +20,14 @@ export function LandingPage({ onStart, onTryFree }: LandingPageProps) {
                         <span className="text-xl font-display font-bold text-slate-900 dark:text-white">Zavri</span>
                     </div>
                     <div className="flex items-center gap-4">
+                        <button
+                            onClick={onToggleTheme}
+                            className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
+                            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                        >
+                            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                        </button>
+                        <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1"></div>
                         <button
                             onClick={onStart}
                             className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold text-sm transition-colors px-4 py-2"

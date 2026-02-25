@@ -16,4 +16,5 @@ export interface UserData {
     xp: number;
     gems: number;
     streak: number;
+    isAdmin?: boolean;
 }

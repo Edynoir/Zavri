@@ -4,6 +4,8 @@ import {
     getDocs,
     getDoc,
     setDoc,
+    updateDoc,
+    deleteDoc,
     doc,
     query,
     where,
@@ -26,6 +28,21 @@ export const saveLesson = async (lesson: Partial<Lesson>) => {
         return docRef.id;
     } catch (e) {
         console.error("Error adding document: ", e);
+        throw e;
+    }
+};
+
+export const saveLessonIfNotDuplicate = async (lesson: Partial<Lesson>): Promise<string | null> => {
+    try {
+        const q = query(collection(db, LESSONS_COLLECTION), where("title", "==", lesson.title));
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+            console.log(`Skipping duplicate: "${lesson.title}"`);
+            return null;
+        }
+        return await saveLesson(lesson);
+    } catch (e) {
+        console.error("Error saving lesson with dedup:", e);
         throw e;
     }
 };
@@ -54,6 +71,50 @@ export const getLessonById = async (id: string): Promise<Lesson | null> => {
         return { id: docSnap.id, ...docSnap.data() } as Lesson;
     }
     return null;
+};
+
+export const updateLesson = async (id: string, data: Partial<Lesson>) => {
+    try {
+        const ref = doc(db, LESSONS_COLLECTION, id);
+        await updateDoc(ref, data as any);
+    } catch (e) {
+        console.error("Error updating lesson:", e);
+        throw e;
+    }
+};
+
+export const deleteLesson = async (id: string) => {
+    try {
+        await deleteDoc(doc(db, LESSONS_COLLECTION, id));
+    } catch (e) {
+        console.error("Error deleting lesson:", e);
+        throw e;
+    }
+};
+
+export const bulkSaveLessons = async (lessons: Partial<Lesson>[], onProgress?: (done: number, total: number) => void): Promise<number> => {
+    // Get all existing titles for dedup
+    const existing = await getAllLessons();
+    const existingTitles = new Set(existing.map(l => l.title.toLowerCase().trim()));
+
+    const toAdd = lessons.filter(l => !existingTitles.has((l.title || '').toLowerCase().trim()));
+    let saved = 0;
+
+    for (const lesson of toAdd) {
+        try {
+            await addDoc(collection(db, LESSONS_COLLECTION), {
+                ...lesson,
+                createdAt: Date.now() - (toAdd.length - saved) * 1000 // offset timestamps for ordering
+            });
+            saved++;
+            onProgress?.(saved, toAdd.length);
+        } catch (e) {
+            console.error(`Failed to save: ${lesson.title}`, e);
+        }
+    }
+
+    console.log(`Bulk save complete: ${saved}/${toAdd.length} new lessons (${lessons.length - toAdd.length} duplicates skipped)`);
+    return saved;
 };
 
 export const saveUserData = async (userData: UserData) => {
@@ -88,7 +149,6 @@ export const seedLessons = async () => {
             category: 'Technology',
             summary: 'Аюулгүй байдал бол хамгийн чухал. Энэ хичээлээр та өөрийгөө хамгаалах үндсэн аргуудыг сурна.',
             author: 'System',
-            createdAt: Date.now(),
             isPaid: false,
             tags: ['security', 'internet'],
             steps: [
@@ -101,7 +161,6 @@ export const seedLessons = async () => {
             category: 'Lifestyle',
             summary: 'Өглөөг эрч хүчтэй эхлүүлэхэд туслах амттай кофе бэлтгэх зааварчилгаа.',
             author: 'System',
-            createdAt: Date.now() - 10000,
             isPaid: false,
             tags: ['coffee', 'home'],
             steps: [
@@ -114,7 +173,6 @@ export const seedLessons = async () => {
             category: 'Education',
             summary: 'Дата мэдээлэлтэй ажиллах анхан шатны мэдлэг олгох хичээл.',
             author: 'System',
-            createdAt: Date.now() - 20000,
             isPaid: true,
             price: 5000,
             tags: ['tools', 'spreadsheet'],
@@ -126,21 +184,10 @@ export const seedLessons = async () => {
     ];
 
     try {
-        const batch = writeBatch(db);
-        const lessonsRef = collection(db, LESSONS_COLLECTION);
-
-        // Clear existing lessons (optional, but good for seeding)
-        // Note: Removing existing lessons requires fetching them first or just adding new ones.
-        // For simplicity, we just add them.
-
-        for (const lesson of initialLessons) {
-            const newDocRef = doc(lessonsRef);
-            batch.set(newDocRef, { ...lesson, id: newDocRef.id });
-        }
-
-        await batch.commit();
-        console.log("Seeding complete!");
+        const saved = await bulkSaveLessons(initialLessons);
+        console.log(`Seeding complete! ${saved} new lessons added.`);
     } catch (e) {
         console.error("Seeding failed:", e);
     }
 };
+

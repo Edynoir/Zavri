@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { BookOpen, Mail, Lock, User, ArrowLeft, Loader2, Sparkles, Eye, EyeOff } from 'lucide-react'
+import { BookOpen, Mail, Lock, User, ArrowLeft, Loader2, Sparkles, Eye, EyeOff, Moon, Sun } from 'lucide-react'
 import { signIn, signUp, signInWithGoogle, sendPasswordReset } from '../services/authService'
 
 interface AuthPageProps {
     onBack: () => void;
     onSuccess: () => void;
+    darkMode: boolean;
+    onToggleTheme: () => void;
 }
 
-export function AuthPage({ onBack, onSuccess }: AuthPageProps) {
+export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPageProps) {
     const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>('signin')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -16,6 +18,28 @@ export function AuthPage({ onBack, onSuccess }: AuthPageProps) {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
+
+    const getErrorMessage = (error: any) => {
+        const code = error.code;
+        switch (code) {
+            case 'auth/invalid-credential':
+                return 'Имэйл эсвэл нууц үг буруу байна. (Мөн "Email/Password" нэвтрэлт идэвхжсэн эсэхийг шалгана уу)';
+            case 'auth/user-not-found':
+                return 'Бүртгэлтэй хэрэглэгч олдсонгүй.';
+            case 'auth/wrong-password':
+                return 'Нууц үг буруу байна.';
+            case 'auth/email-already-in-use':
+                return 'Энэ имэйл хаяг аль хэдийн бүртгэгдсэн байна.';
+            case 'auth/weak-password':
+                return 'Нууц үг хэтэрхий богино байна (хамгийн багадаа 6 тэмдэгт).';
+            case 'auth/network-request-failed':
+                return 'Интернэт холболтоо шалгана уу.';
+            case 'auth/too-many-requests':
+                return 'Хэт олон оролдлого хийсэн тул түр хүлээнэ үү.';
+            default:
+                return error.message || 'Алдаа гарлаа';
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -37,7 +61,7 @@ export function AuthPage({ onBack, onSuccess }: AuthPageProps) {
                 setTimeout(() => setMode('signin'), 5000)
             }
         } catch (err: any) {
-            setError(err.message || 'Алдаа гарлаа')
+            setError(getErrorMessage(err))
         } finally {
             setLoading(false)
         }
@@ -59,13 +83,22 @@ export function AuthPage({ onBack, onSuccess }: AuthPageProps) {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6 transition-colors duration-500">
             <div className="w-full max-w-md">
-                <button
-                    onClick={mode === 'reset' ? () => setMode('signin') : onBack}
-                    className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors mb-8 font-bold text-sm group"
-                >
-                    <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                    Буцах
-                </button>
+                <div className="flex items-center justify-between mb-8">
+                    <button
+                        onClick={mode === 'reset' ? () => setMode('signin') : onBack}
+                        className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-bold text-sm group"
+                    >
+                        <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+                        Буцах
+                    </button>
+                    <button
+                        onClick={onToggleTheme}
+                        className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-all shadow-sm"
+                        title={darkMode ? "Light Mode" : "Dark Mode"}
+                    >
+                        {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                    </button>
+                </div>
 
                 <div className="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-none">
                     <div className="flex flex-col items-center mb-10">

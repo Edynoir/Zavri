@@ -232,7 +232,7 @@ function App() {
                 className={`absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-500 ${isSettingsOpen ? 'opacity-100' : 'opacity-0'}`}
                 onClick={() => setIsSettingsOpen(false)}
             />
-            <div className={`absolute right-0 top-0 h-full w-full max-w-sm bg-white dark:bg-slate-900 shadow-2xl transition-transform duration-500 ease-out transform ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`absolute right-0 top-0 h-full w-full sm:max-w-sm bg-white dark:bg-slate-900 shadow-2xl transition-transform duration-500 ease-out transform ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="p-8 h-full flex flex-col">
                     <div className="flex items-center justify-between mb-12">
                         <div className="flex items-center gap-3">
@@ -327,42 +327,42 @@ function App() {
                                 <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-500/30 group-hover:scale-105 transition-transform">
                                     <BookOpen size={24} />
                                 </div>
-                                <span className="text-xl font-display font-bold text-slate-900 dark:text-white tracking-tight">Zavri</span>
+                                <span className="text-lg sm:text-xl font-display font-bold text-slate-900 dark:text-white tracking-tight">Zavri</span>
                             </div>
 
-                            <nav className="flex items-center gap-2 md:gap-4">
+                            <nav className="flex items-center gap-1 sm:gap-2 md:gap-4">
                                 <button
                                     onClick={() => setActiveTab('home')}
-                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'home' ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
+                                    className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${activeTab === 'home' ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
                                 >
                                     Нүүр
                                 </button>
                                 {user?.isAdmin && (
                                     <button
                                         onClick={() => setActiveTab('admin')}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === 'admin' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
+                                        className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${activeTab === 'admin' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
                                     >
-                                        <LayoutDashboard size={16} />
+                                        <LayoutDashboard size={14} className="sm:w-4 sm:h-4" />
                                         <span>Админ</span>
                                     </button>
                                 )}
 
-                                <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-2"></div>
+                                <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1 sm:mx-2"></div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1 sm:gap-2">
                                     <button
                                         onClick={() => setIsSettingsOpen(true)}
-                                        className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
+                                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-all"
                                         title="Тохиргоо"
                                     >
-                                        <Settings size={18} />
+                                        <Settings size={16} className="sm:w-4.5 sm:h-4.5" />
                                     </button>
-                                    <div className="hidden md:flex items-center gap-3 pl-2">
-                                        <div className="text-right">
+                                    <div className="hidden sm:flex items-center gap-3 pl-1 sm:pl-2">
+                                        <div className="text-right hidden md:block">
                                             <p className="text-xs font-bold text-slate-900 dark:text-white leading-none">{user?.displayName}</p>
                                             <p className="text-[10px] text-slate-400 font-medium mt-1 uppercase tracking-tight">{user?.xp} XP • {user?.gems} Gem</p>
                                         </div>
-                                        <div className="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-sm">
+                                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-xs sm:text-sm">
                                             {user?.displayName?.charAt(0)}
                                         </div>
                                     </div>
@@ -385,7 +385,7 @@ function App() {
                                         <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">Mongolia's Learning Portal</span>
                                     </div>
 
-                                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-extrabold mb-8 leading-[1.1] tracking-tight">
+                                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-extrabold mb-8 leading-[1.1] tracking-tight">
                                         Мэдлэгээ өргөтгөх <br />
                                         <span className="text-primary-600 dark:text-primary-500">Монгол</span> зааварчилгаа
                                     </h1>
@@ -578,17 +578,17 @@ function App() {
                                     <h3 className="text-xl font-bold mb-6">Хичээлийн жагсаалт</h3>
                                     <div className="space-y-3">
                                         {lessons.map(lesson => (
-                                            <div key={lesson.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
+                                            <div key={lesson.id} className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                                 {editingLesson?.id === lesson.id ? (
                                                     <div className="flex-1 space-y-2">
                                                         <input value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
                                                         <input value={editSummary} onChange={e => setEditSummary(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
-                                                        <select value={editCategory} onChange={e => setEditCategory(e.target.value)} className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
+                                                        <select value={editCategory} onChange={e => setEditCategory(e.target.value)} className="w-full sm:w-auto px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm">
                                                             <option>Technology</option><option>Cooking</option><option>Lifestyle</option><option>Education</option><option>Health</option><option>Finance</option>
                                                         </select>
                                                         <div className="flex gap-2 mt-2">
-                                                            <button onClick={handleSaveEdit} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-xs font-bold flex items-center gap-1"><Check size={14} /> Хадгалах</button>
-                                                            <button onClick={() => setEditingLesson(null)} className="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-lg text-xs font-bold">Цуцлах</button>
+                                                            <button onClick={handleSaveEdit} className="flex-1 sm:flex-none px-4 py-2 bg-primary-600 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1"><Check size={14} /> Хадгалах</button>
+                                                            <button onClick={() => setEditingLesson(null)} className="flex-1 sm:flex-none px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-lg text-xs font-bold">Цуцлах</button>
                                                         </div>
                                                     </div>
                                                 ) : (
@@ -598,11 +598,11 @@ function App() {
                                                             <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{lesson.category} • {lesson.steps?.length || 0} алхам{lesson.sourceUrl ? ' • WikiHow' : ''}</p>
                                                         </div>
                                                         <div className="flex items-center gap-2 shrink-0">
-                                                            <button onClick={() => handleEditLesson(lesson)} className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 flex items-center justify-center transition-all" title="Засах">
-                                                                <Pencil size={14} />
+                                                            <button onClick={() => handleEditLesson(lesson)} className="flex-1 sm:flex-none h-9 px-4 sm:px-0 sm:w-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 flex items-center justify-center transition-all" title="Засах">
+                                                                <Pencil size={14} className="mr-1 sm:mr-0" /> <span className="sm:hidden text-xs font-bold">Засах</span>
                                                             </button>
-                                                            <button onClick={() => handleDeleteLesson(lesson.id, lesson.title)} className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center transition-all" title="Устгах">
-                                                                <Trash2 size={14} />
+                                                            <button onClick={() => handleDeleteLesson(lesson.id, lesson.title)} className="flex-1 sm:flex-none h-9 px-4 sm:px-0 sm:w-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center transition-all" title="Устгах">
+                                                                <Trash2 size={14} className="mr-1 sm:mr-0" /> <span className="sm:hidden text-xs font-bold">Устгах</span>
                                                             </button>
                                                         </div>
                                                     </>

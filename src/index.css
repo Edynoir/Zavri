@@ -122,11 +122,15 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 .content-section h2 {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.875rem;
-    margin-top: 3rem;
+    font-size: clamp(1.5rem, 5vw, 1.875rem);
+    margin-top: clamp(2rem, 8vw, 3rem);
     margin-bottom: 1.5rem;
     color: var(--primary-700);
     display: flex;
@@ -150,7 +154,7 @@ body {
 .content-section h3 {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
     margin-top: 2rem;
     margin-bottom: 1rem;
     color: var(--color-slate-800);
@@ -162,7 +166,7 @@ body {
 
 .content-section p {
     margin-bottom: 1.25rem;
-    font-size: 1.1rem;
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
     color: var(--color-slate-600);
 }
 

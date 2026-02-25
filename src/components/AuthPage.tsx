@@ -100,15 +100,15 @@ export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPag
                     </button>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-none">
-                    <div className="flex flex-col items-center mb-10">
-                        <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-xl mb-6">
-                            <BookOpen size={32} />
+                <div className="bg-white dark:bg-slate-900 p-6 sm:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-none">
+                    <div className="flex flex-col items-center mb-8 sm:mb-10">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-xl mb-4 sm:mb-6">
+                            <BookOpen size={28} className="sm:w-8 sm:h-8" />
                         </div>
-                        <h2 className="text-3xl font-display font-bold text-slate-950 dark:text-white">
+                        <h2 className="text-2xl sm:text-3xl font-display font-bold text-slate-950 dark:text-white">
                             {mode === 'signin' ? 'Тавтай морил' : mode === 'signup' ? 'Бүртгэл үүсгэх' : 'Нууц үг сэргээх'}
                         </h2>
-                        <p className="text-slate-500 dark:text-slate-400 mt-2 text-center text-sm">
+                        <p className="text-slate-500 dark:text-slate-400 mt-2 text-center text-xs sm:text-sm">
                             {mode === 'signin' ? 'Мэдлэгээ өргөтгөхөд бэлэн үү?' :
                                 mode === 'signup' ? 'Өөрийн суралцах аяллаа өнөөдөр эхлүүлээрэй.' :
                                     'Бүртгэлтэй имэйл хаягаа оруулна уу.'}

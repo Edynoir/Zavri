@@ -11,8 +11,8 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 selection:bg-primary-100 dark:selection:bg-primary-900/30 transition-colors duration-500">
             {/* Nav */}
-            <nav className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <nav className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-colors uppercase">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg">
                             <BookOpen size={24} />
@@ -36,7 +36,7 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
                         </button>
                         <button
                             onClick={onStart}
-                            className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-xl text-sm font-bold shadow-xl shadow-slate-200 dark:shadow-none hover:scale-105 active:scale-95 transition-all"
+                            className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-xl shadow-slate-200 dark:shadow-none hover:scale-105 active:scale-95 transition-all"
                         >
                             Бүртгүүлэх
                         </button>
@@ -52,7 +52,7 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
                             <Sparkles size={14} />
                             Монголын анхны сургалтын платформ
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-display font-black text-slate-950 dark:text-white mb-8 leading-[1.1] tracking-tight">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-black text-slate-950 dark:text-white mb-8 leading-[1.1] tracking-tight">
                             Мэдлэгээ <span className="text-primary-600 italic">хялбархан</span> <br />
                             өргөтгөх боломж
                         </h1>
@@ -62,14 +62,14 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button
                                 onClick={onTryFree}
-                                className="px-8 py-5 bg-primary-600 text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-primary-500/20 hover:bg-primary-700 transition-all active:scale-95 group"
+                                className="px-6 sm:px-8 py-4 sm:py-5 bg-primary-600 text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-primary-500/20 hover:bg-primary-700 transition-all active:scale-95 group"
                             >
                                 Үнэгүй турших
                                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                             </button>
                             <button
                                 onClick={onStart}
-                                className="px-8 py-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95"
+                                className="px-6 sm:px-8 py-4 sm:py-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95"
                             >
                                 Бүртгэл үүсгэх
                             </button>
@@ -99,11 +99,11 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
                                     alt="Learning Hero"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 dark:from-slate-950/60 via-transparent to-transparent"></div>
-                                <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-xl">
-                                    <h3 className="font-bold text-slate-900 dark:text-white mb-1">Фэйсбүүкт хэрхэн аюулгүй нэвтрэх вэ?</h3>
+                                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-4 sm:p-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-xl">
+                                    <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white mb-1">Фэйсбүүкт хэрхэн аюулгүй нэвтрэх вэ?</h3>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 rounded">Үнэгүй</span>
-                                        <span className="text-xs text-slate-400 dark:text-slate-500">12 минутын хичээл</span>
+                                        <span className="text-[10px] sm:text-xs font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 rounded">Үнэгүй</span>
+                                        <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500">12 минутын хичээл</span>
                                     </div>
                                 </div>
                             </div>

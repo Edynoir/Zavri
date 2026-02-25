@@ -52,7 +52,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack }) => {
                         <div className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700"></div>
                         <span className="text-slate-500 dark:text-slate-400 text-sm">{new Date(lesson.createdAt).toLocaleDateString('mn-MN', { year: 'numeric', month: 'long' })}</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-display font-extrabold mb-8 leading-[1.15]">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-display font-extrabold mb-6 sm:mb-8 leading-[1.15]">
                         {lesson.title}
                     </h1>
                     <div className="flex flex-wrap gap-2 mb-10">
@@ -63,11 +63,11 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack }) => {
                 </div>
 
                 {/* Summary */}
-                <div className="relative mb-16 p-8 rounded-3xl bg-white dark:bg-slate-900 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                    <div className="absolute -top-4 -left-4 w-12 h-12 bg-primary-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                        <Info size={24} />
+                <div className="relative mb-12 sm:mb-16 p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+                    <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 w-10 h-10 sm:w-12 sm:h-12 bg-primary-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                        <Info size={20} className="sm:w-6 sm:h-6" />
                     </div>
-                    <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 italic leading-relaxed">
+                    <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 italic leading-relaxed">
                         {lesson.summary}
                     </p>
                 </div>
@@ -85,20 +85,26 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack }) => {
                                     </span>
                                     {step.title}
                                 </h3>
-                                <p className="pl-12 text-slate-600 dark:text-slate-400">
+                                <p className="pl-10 sm:pl-12 text-slate-600 dark:text-slate-400 text-sm sm:text-base">
                                     {step.content}
                                 </p>
 
+                                {step.imageUrl && (
+                                    <div className="ml-10 sm:ml-12 mt-6 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm">
+                                        <img src={step.imageUrl} alt={step.title} className="w-full h-auto object-cover max-h-[400px]" />
+                                    </div>
+                                )}
+
                                 {step.tips && step.tips.length > 0 && (
-                                    <div className="ml-12 mt-6 bg-slate-50 dark:bg-slate-800/50 border-l-4 border-primary-400 p-8 rounded-r-2xl">
-                                        <h4 className="flex items-center gap-2 text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">
+                                    <div className="ml-10 sm:ml-12 mt-6 bg-slate-50 dark:bg-slate-800/50 border-l-4 border-primary-400 p-6 sm:p-8 rounded-r-2xl">
+                                        <h4 className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">
                                             <HelpCircle size={16} className="text-primary-500" />
                                             Зөвлөгөө
                                         </h4>
                                         <ul className="space-y-3 !pl-0">
                                             {step.tips.map((tip, i) => (
-                                                <li key={i} className="list-none flex items-start gap-2 text-slate-600 dark:text-slate-400">
-                                                    <ArrowRight size={14} className="mt-1.5 flex-shrink-0 text-primary-300 dark:text-primary-700" />
+                                                <li key={i} className="list-none flex items-start gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                                                    <ArrowRight size={14} className="mt-1 flex-shrink-0 text-primary-300 dark:text-primary-700" />
                                                     {tip}
                                                 </li>
                                             ))}

@@ -4,6 +4,9 @@ export interface UserProgress {
     score?: number;
 }
 
+export type UserRole = 'student' | 'teacher' | 'admin' | 'moderator';
+
+
 export interface UserData {
     uid: string;
     email: string | null;
@@ -16,5 +19,6 @@ export interface UserData {
     xp: number;
     gems: number;
     streak: number;
+    role: UserRole;
     isAdmin?: boolean;
 }

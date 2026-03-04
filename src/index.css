@@ -7,26 +7,19 @@
 
     --animate-fade-in: fadeIn 0.8s ease-out forwards;
     --animate-slide-up: slideUp 0.6s ease-out forwards;
+    --animate-scale-in: scaleIn 0.2s ease-out forwards;
 
-    --color-primary: #0ea5e9;
     --color-primary-50: #f0f9ff;
     --color-primary-100: #e0f2fe;
+    --color-primary-200: #bae6fd;
+    --color-primary-300: #7dd3fc;
+    --color-primary-400: #38bdf8;
     --color-primary-500: #0ea5e9;
     --color-primary-600: #0284c7;
     --color-primary-700: #0369a1;
+    --color-primary-800: #075985;
     --color-primary-900: #0c4a6e;
-
-    --color-slate-50: #f8fafc;
-    --color-slate-100: #f1f5f9;
-    --color-slate-200: #e2e8f0;
-    --color-slate-300: #cbd5e1;
-    --color-slate-400: #94a3b8;
-    --color-slate-500: #64748b;
-    --color-slate-600: #475569;
-    --color-slate-700: #334155;
-    --color-slate-800: #1e293b;
-    --color-slate-900: #0f172a;
-    --color-slate-950: #020617;
+    --color-primary-950: #082f49;
 
     @keyframes fadeIn {
         from {
@@ -49,97 +42,104 @@
             transform: translateY(0);
         }
     }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
 }
 
+/* Dark mode variant: .dark class on html element */
 @custom-variant dark (&:where(.dark, .dark *));
 
-:root {
-    font-family: 'Montserrat', system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.7;
-    font-weight: 400;
-    color-scheme: light dark;
-    background-color: var(--color-slate-50);
-    color: var(--color-slate-900);
-}
-
-.dark {
-    --color-slate-50: #f8fafc;
-    --color-slate-100: #f1f5f9;
-    --color-slate-200: #e2e8f0;
-    --color-slate-300: #cbd5e1;
-    --color-slate-400: #94a3b8;
-    --color-slate-500: #64748b;
-    --color-slate-600: #475569;
-    --color-slate-700: #334155;
-    --color-slate-800: #1e293b;
-    --color-slate-900: #0f172a;
-    --color-slate-950: #020617;
+/* ============================================
+   BASE STYLES
+   ============================================ */
+html {
+    scroll-behavior: smooth;
 }
 
 body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    background-color: var(--color-slate-50);
-    color: var(--color-slate-900);
-    transition: background-color 0.5s ease, color 0.5s ease;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    line-height: 1.7;
+    font-weight: 400;
+    /* Light mode base */
+    background-color: #f8fafc;
+    color: #0f172a;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Dark mode base — applied when <html> has .dark class */
+html.dark body {
+    background-color: #020617;
+    color: #f1f5f9;
 }
 
 #root {
     width: 100%;
 }
 
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
 .font-display {
     font-family: var(--font-display);
 }
 
+/* ============================================
+   GLASSMORPHISM
+   ============================================ */
 .glass {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.dark .glass {
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+html.dark .glass {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-card {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-.dark .glass-card {
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+html.dark .glass-card {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.step-number {
-    background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
+/* ============================================
+   CONTENT SECTIONS (LessonView)
+   ============================================ */
 .content-section h2 {
     font-family: var(--font-display);
     font-weight: 700;
     font-size: clamp(1.5rem, 5vw, 1.875rem);
     margin-top: clamp(2rem, 8vw, 3rem);
     margin-bottom: 1.5rem;
-    color: var(--primary-700);
+    color: var(--color-primary-700);
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
 
-.dark .content-section h2 {
-    color: var(--primary-400);
+html.dark .content-section h2 {
+    color: var(--color-primary-400);
 }
 
 .content-section h2::before {
@@ -147,7 +147,7 @@ html {
     display: inline-block;
     width: 4px;
     height: 1.5rem;
-    background: var(--primary-500);
+    background: var(--color-primary-500);
     border-radius: 2px;
 }
 
@@ -157,21 +157,21 @@ html {
     font-size: clamp(1.25rem, 4vw, 1.5rem);
     margin-top: 2rem;
     margin-bottom: 1rem;
-    color: var(--color-slate-800);
+    color: #334155;
 }
 
-.dark .content-section h3 {
-    color: var(--color-slate-100);
+html.dark .content-section h3 {
+    color: #e2e8f0;
 }
 
 .content-section p {
     margin-bottom: 1.25rem;
     font-size: clamp(0.95rem, 2.5vw, 1.1rem);
-    color: var(--color-slate-600);
+    color: #475569;
 }
 
-.dark .content-section p {
-    color: var(--color-slate-400);
+html.dark .content-section p {
+    color: #94a3b8;
 }
 
 .content-section ul,
@@ -185,17 +185,29 @@ html {
     position: relative;
 }
 
+/* ============================================
+   STEP NUMBER GRADIENT TEXT
+   ============================================ */
+.step-number {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ============================================
+   BADGES / BUTTONS
+   ============================================ */
 .tag-badge {
     transition: all 0.2s ease;
 }
 
 .tag-badge:hover {
     transform: translateY(-2px);
-    background-color: #e0f2fe;
 }
 
 .btn-primary {
-    background-color: var(--primary-600);
+    background-color: var(--color-primary-600);
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 0.75rem;
@@ -203,16 +215,30 @@ html {
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-700);
+    background-color: var(--color-primary-700);
     transform: translateY(-1px);
 }
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 99px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
 }

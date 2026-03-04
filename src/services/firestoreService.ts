@@ -14,10 +14,11 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { Lesson } from "../types/lesson";
-import { UserData } from "../types/user";
+import { UserData, UserRole } from "../types/user";
 
 const LESSONS_COLLECTION = "lessons";
 const USERS_COLLECTION = "users";
+const REPORTS_COLLECTION = "reports";
 
 export const saveLesson = async (lesson: Partial<Lesson>) => {
     try {
@@ -142,6 +143,26 @@ export const getUserData = async (uid: string): Promise<UserData | null> => {
     }
 };
 
+export const getAllUsers = async (): Promise<UserData[]> => {
+    try {
+        const querySnapshot = await getDocs(collection(db, USERS_COLLECTION));
+        return querySnapshot.docs.map(doc => doc.data() as UserData);
+    } catch (error) {
+        console.error("Error fetching all users:", error);
+        throw error;
+    }
+};
+
+export const updateUserRole = async (uid: string, role: UserRole) => {
+    try {
+        const userRef = doc(db, USERS_COLLECTION, uid);
+        await updateDoc(userRef, { role });
+    } catch (error) {
+        console.error("Error updating user role:", error);
+        throw error;
+    }
+};
+
 export const seedLessons = async () => {
     const initialLessons: Partial<Lesson>[] = [
         {
@@ -191,3 +212,37 @@ export const seedLessons = async () => {
     }
 };
 
+
+export const reportLesson = async (lessonId: string, userId: string, reason: string) => {
+    try {
+        await addDoc(collection(db, REPORTS_COLLECTION), {
+            lessonId,
+            userId,
+            reason,
+            status: 'pending',
+            createdAt: Date.now()
+        });
+    } catch (e) {
+        console.error("Error reporting lesson:", e);
+        throw e;
+    }
+};
+
+export const getReportedLessons = async () => {
+    try {
+        const snapshot = await getDocs(query(collection(db, REPORTS_COLLECTION), orderBy("createdAt", "desc")));
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (e) {
+        console.error("Error fetching reports:", e);
+        throw e;
+    }
+};
+
+export const updateReportStatus = async (reportId: string, status: 'approved' | 'declined') => {
+    try {
+        await updateDoc(doc(db, REPORTS_COLLECTION, reportId), { status });
+    } catch (e) {
+        console.error("Error updating report status:", e);
+        throw e;
+    }
+};

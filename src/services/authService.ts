@@ -10,7 +10,7 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import { getUserData, saveUserData } from "./firestoreService";
-import { UserData } from "../types/user";
+import { UserData, UserRole } from "../types/user";
 
 export const signInAnonymously = async () => {
     try {
@@ -23,7 +23,7 @@ export const signInAnonymously = async () => {
             userData = {
                 uid: user.uid,
                 email: null,
-                displayName: "Anonymous Learner",
+                displayName: "Free Plan",
                 photoURL: null,
                 isAnonymous: true,
                 createdAt: Date.now(),
@@ -31,9 +31,10 @@ export const signInAnonymously = async () => {
                 lessonProgress: [],
                 xp: 0,
                 gems: 0,
-                streak: 0
+                streak: 0,
+                role: 'student'
             };
-            await saveUserData(userData);
+            await saveUserData(userData as any);
         }
         return userData;
     } catch (error) {
@@ -42,7 +43,7 @@ export const signInAnonymously = async () => {
     }
 };
 
-export const signUp = async (email: string, pass: string, name: string) => {
+export const signUp = async (email: string, pass: string, name: string, role: UserRole) => {
     try {
         const credential = await createUserWithEmailAndPassword(auth, email, pass);
         const user = credential.user;
@@ -58,7 +59,8 @@ export const signUp = async (email: string, pass: string, name: string) => {
             lessonProgress: [],
             xp: 0,
             gems: 0,
-            streak: 0
+            streak: 0,
+            role: role
         };
         await saveUserData(userData);
         return userData;
@@ -104,9 +106,10 @@ export const signInWithGoogle = async () => {
                 lessonProgress: [],
                 xp: 0,
                 gems: 0,
-                streak: 0
+                streak: 0,
+                role: 'student'
             };
-            await saveUserData(userData);
+            await saveUserData(userData as UserData);
         } else {
             await saveUserData({ ...userData, lastLoginAt: Date.now() });
         }

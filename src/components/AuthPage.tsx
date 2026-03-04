@@ -1,19 +1,23 @@
 import { useState } from 'react'
-import { BookOpen, Mail, Lock, User, ArrowLeft, Loader2, Sparkles, Eye, EyeOff, Moon, Sun } from 'lucide-react'
+import { BookOpen, Mail, Lock, User, ArrowLeft, Loader2, Sparkles, Eye, EyeOff, Moon, Sun, GraduationCap, School } from 'lucide-react'
 import { signIn, signUp, signInWithGoogle, sendPasswordReset } from '../services/authService'
+import { UserRole } from '../types/user'
+import { ShieldCheck, UserCog } from 'lucide-react'
 
 interface AuthPageProps {
     onBack: () => void;
     onSuccess: () => void;
     darkMode: boolean;
     onToggleTheme: () => void;
+    initialMode?: 'signin' | 'signup' | 'reset';
 }
 
-export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPageProps) {
-    const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>('signin')
+export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme, initialMode = 'signin' }: AuthPageProps) {
+    const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>(initialMode)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [name, setName] = useState('')
+    const [role, setRole] = useState<UserRole>('student')
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
@@ -53,7 +57,7 @@ export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPag
                 onSuccess()
             } else if (mode === 'signup') {
                 if (!name) throw new Error('Нэрээ оруулна уу')
-                await signUp(email, password, name)
+                await signUp(email, password, name, role)
                 onSuccess()
             } else if (mode === 'reset') {
                 await sendPasswordReset(email)
@@ -61,7 +65,9 @@ export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPag
                 setTimeout(() => setMode('signin'), 5000)
             }
         } catch (err: any) {
-            setError(getErrorMessage(err))
+            const msg = getErrorMessage(err)
+            setError(msg)
+            // Errors shown inline in the form, not as a modal
         } finally {
             setLoading(false)
         }
@@ -81,31 +87,31 @@ export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPag
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6 transition-colors duration-500">
+        <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-6 transition-colors duration-500">
             <div className="w-full max-w-md">
                 <div className="flex items-center justify-between mb-8">
                     <button
                         onClick={mode === 'reset' ? () => setMode('signin') : onBack}
-                        className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-bold text-sm group"
+                        className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 transition-colors font-bold text-sm group"
                     >
                         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                         Буцах
                     </button>
                     <button
                         onClick={onToggleTheme}
-                        className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-all shadow-sm"
+                        className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 transition-all shadow-sm"
                         title={darkMode ? "Light Mode" : "Dark Mode"}
                     >
                         {darkMode ? <Sun size={18} /> : <Moon size={18} />}
                     </button>
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 p-6 sm:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-none">
+                <div className="bg-slate-50 dark:bg-slate-900 p-6 sm:p-10 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl dark:shadow-none">
                     <div className="flex flex-col items-center mb-8 sm:mb-10">
                         <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-xl mb-4 sm:mb-6">
                             <BookOpen size={28} className="sm:w-8 sm:h-8" />
                         </div>
-                        <h2 className="text-2xl sm:text-3xl font-display font-bold text-slate-950 dark:text-white">
+                        <h2 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 dark:text-slate-50">
                             {mode === 'signin' ? 'Тавтай морил' : mode === 'signup' ? 'Бүртгэл үүсгэх' : 'Нууц үг сэргээх'}
                         </h2>
                         <p className="text-slate-500 dark:text-slate-400 mt-2 text-center text-xs sm:text-sm">
@@ -117,20 +123,50 @@ export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPag
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {mode === 'signup' && (
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">Таны нэр</label>
-                                <div className="relative">
-                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                    <input
-                                        type="text"
-                                        required
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        placeholder="Нэрээ оруулна уу"
-                                        className="w-full pl-12 pr-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-slate-50/30 dark:bg-slate-800/50 text-slate-900 dark:text-white"
-                                    />
+                            <>
+                                <div className="space-y-3">
+                                    <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">Хэрэглэгчийн төрөл</label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole('student')}
+                                            className={`flex items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all ${role === 'student'
+                                                ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                                                : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-500 hover:border-slate-200 dark:hover:border-slate-700'
+                                                }`}
+                                        >
+                                            <GraduationCap size={20} />
+                                            <span className="font-bold">Сурагч</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRole('teacher')}
+                                            className={`flex items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all ${role === 'teacher'
+                                                ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                                                : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-500 hover:border-slate-200 dark:hover:border-slate-700'
+                                                }`}
+                                        >
+                                            <School size={20} />
+                                            <span className="font-bold">Багш</span>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">Таны нэр</label>
+                                    <div className="relative">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                        <input
+                                            type="text"
+                                            required
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            placeholder="Нэрээ оруулна уу"
+                                            className="w-full pl-12 pr-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all bg-slate-50/30 dark:bg-slate-800/50 text-slate-900 dark:text-white"
+                                        />
+                                    </div>
+                                </div>
+                            </>
                         )}
 
                         <div className="space-y-2">
@@ -194,7 +230,7 @@ export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPag
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-5 bg-slate-950 dark:bg-white hover:bg-slate-900 dark:hover:bg-slate-100 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white dark:text-slate-900 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-xl shadow-slate-200 dark:shadow-none active:scale-[0.98]"
+                            className="w-full py-5 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-slate-100 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white dark:text-slate-900 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-xl shadow-slate-200 dark:shadow-none active:scale-[0.98]"
                         >
                             {loading ? (
                                 <Loader2 size={24} className="animate-spin" />
@@ -221,7 +257,7 @@ export function AuthPage({ onBack, onSuccess, darkMode, onToggleTheme }: AuthPag
                             <button
                                 onClick={handleGoogleSignIn}
                                 disabled={loading}
-                                className="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-sm active:scale-[0.98]"
+                                className="w-full py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-50 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-sm active:scale-[0.98]"
                             >
                                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
                                 Google-ээр нэвтрэх

@@ -12,6 +12,7 @@ export interface Lesson {
     category: string;
     summary: string;
     author: string;
+    authorId: string;
     createdAt: number;
     isPaid: boolean;
     price?: number;

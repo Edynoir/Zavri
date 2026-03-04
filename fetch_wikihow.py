@@ -1,7 +1,6 @@
 """
-WikiHow Article Fetcher & Mongolian Translator (v2)
-Fetches raw wikiHow HTML, uses Gemini to extract structured data,
-translates to Mongolian, and outputs JSON.
+WikiHow Article Fetcher & Mongolian Translator (v3 - API Powered)
+Uses WikiHow MediaWiki API to find articles and Gemini to extract/translate.
 """
 
 import json
@@ -44,6 +43,46 @@ SEARCH_QUERIES = [
     ("save money", "Finance"),
 ]
 
+def wikihow_api_call(params):
+    """Make a call to the WikiHow MediaWiki API."""
+    base_url = "https://www.wikihow.com/api.php?"
+    params['format'] = 'json'
+    url = base_url + urllib.parse.urlencode(params)
+    headers = {
+        'User-Agent': 'Zavri-Fetcher/2.0 (Educational Project; Mongolian Translation)'
+    }
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read().decode('utf-8'))
+    except Exception as e:
+        print(f"  WikiHow API error: {e}")
+        return None
+
+def search_wikihow_article(query):
+    """Search for the best wikiHow article match for a query."""
+    data = wikihow_api_call({
+        'action': 'query',
+        'list': 'search',
+        'srsearch': query,
+        'srlimit': 1
+    })
+    if data and data.get('query', {}).get('search'):
+        result = data['query']['search'][0]
+        return result['title'], result['pageid']
+    return None, None
+
+def get_article_html(pageid):
+    """Fetch the parsed HTML for a specific pageid."""
+    data = wikihow_api_call({
+        'action': 'parse',
+        'pageid': pageid,
+        'prop': 'text'
+    })
+    if data and data.get('parse', {}).get('text', {}).get('*'):
+        return data['parse']['text']['*']
+    return None
+
 def call_gemini(prompt):
     """Call Gemini REST API directly."""
     if not GEMINI_API_KEY:
@@ -63,56 +102,38 @@ def call_gemini(prompt):
         print(f"  Gemini API error: {e}")
         return None
 
-def fetch_html(url):
-    """Fetch raw HTML from a URL."""
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-    req = urllib.request.Request(url, headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return resp.read().decode('utf-8', errors='ignore')
-    except Exception as e:
-        print(f"  Fetch error for {url}: {e}")
+def process_article(query, category):
+    """Search, fetch, and translate an article."""
+    title, pageid = search_wikihow_article(query)
+    if not title:
+        print(f"  ❌ Article not found for: {query}")
+        return None
+    
+    source_url = f"https://www.wikihow.com/{title.replace(' ', '-')}"
+    print(f"  Found: {title} (ID: {pageid})")
+    
+    html = get_article_html(pageid)
+    if not html:
+        print(f"  ❌ Failed to fetch content for: {title}")
         return None
 
-def search_wikihow_url(query):
-    """Find the first wikiHow article URL for a query via Google Search or direct guess."""
-    # Constructing a direct URL guess is often correct for wikiHow
-    # "create a strong password" -> "Create-a-Strong-Password"
-    slug = "-".join([w.capitalize() for w in query.split()])
-    url = f"https://www.wikihow.com/{slug}"
-    return url
+    # Clean HTML slightly to save tokens
+    clean_html = re.sub(r'<script.*?</script>', '', html, flags=re.DOTALL)
+    clean_html = re.sub(r'<style.*?</style>', '', clean_html, flags=re.DOTALL)
+    clean_html = re.sub(r'<!--.*?-->', '', clean_html, flags=re.DOTALL)
+    truncated_html = clean_html[:25000]
 
-def process_article(query, category):
-    """Fetch, extract, and translate an article."""
-    url = search_wikihow_url(query)
-    print(f"  Fetching: {url}")
-    
-    html = fetch_html(url)
-    if not html:
-        # Try lowercase version
-        url = url.lower()
-        html = fetch_html(url)
-        if not html:
-            return None
-
-    print(f"  Extracting and translating to Mongolian...")
-    
-    # We send a truncated version of HTML to Gemini to stay within limits
-    # and focus on the main content area (usually <div id="bodycontents">)
-    truncated_html = html[:30000] # Take first 30k chars which usually covers steps
-    
     prompt = f"""You are a content extractor and translator. 
 Given the provided wikiHow HTML, extract the following information and translate it into MONGOLIAN (Cyrillic).
 
+Original Title: {title}
 Category: {category}
-URL: {url}
+URL: {source_url}
 
 Information to extract and translate:
-1. Title (Mongolian)
+1. Mongolian Title (Natural and clear)
 2. Summary/Intro (2-3 sentences in Mongolian)
-3. Steps (At least 4-5 steps):
+3. Steps (At least 5 steps if available):
    - Title (Mongolian)
    - Detailed Description (2-3 sentences in Mongolian)
    - 2-3 Tips (Mongolian)
@@ -144,7 +165,6 @@ IMPORTANT: Return ONLY the JSON object. No explanation."""
     try:
         data = json.loads(raw_json)
         
-        # Add metadata
         lesson_steps = []
         for i, step in enumerate(data.get('steps', [])):
             lesson_steps.append({
@@ -155,12 +175,12 @@ IMPORTANT: Return ONLY the JSON object. No explanation."""
             })
             
         return {
-            "title": data.get('title', query),
+            "title": data.get('title', title),
             "category": category,
             "summary": data.get('summary', ''),
             "author": "WikiHow",
             "isPaid": False,
-            "sourceUrl": url,
+            "sourceUrl": source_url,
             "tags": data.get('tags', [category.lower()]),
             "steps": lesson_steps,
         }
@@ -170,7 +190,7 @@ IMPORTANT: Return ONLY the JSON object. No explanation."""
 
 def main():
     print("=" * 60)
-    print("  WikiHow Robust Fetcher & Mongolian Translator")
+    print("  WikiHow Robust API Fetcher & Mongolian Translator")
     print("=" * 60)
 
     if not GEMINI_API_KEY:
@@ -190,7 +210,7 @@ def main():
         else:
             print(f"  ❌ Failed")
             
-        time.sleep(2) # Prevent being blocked
+        time.sleep(1) # Prevent being blocked
 
     # Save to file
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)

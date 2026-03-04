@@ -1,7 +1,7 @@
 import { BookOpen, ArrowRight, Sparkles, CheckCircle, Smartphone, Globe, Moon, Sun } from 'lucide-react'
 
 interface LandingPageProps {
-    onStart: () => void;
+    onStart: (mode?: 'signin' | 'signup') => void;
     onTryFree: () => void;
     darkMode: boolean;
     onToggleTheme: () => void;
@@ -9,15 +9,15 @@ interface LandingPageProps {
 
 export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: LandingPageProps) {
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 selection:bg-primary-100 dark:selection:bg-primary-900/30 transition-colors duration-500">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 selection:bg-primary-500/20 transition-colors duration-500">
             {/* Nav */}
-            <nav className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-colors uppercase">
+            <nav className="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-colors uppercase">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg">
                             <BookOpen size={24} />
                         </div>
-                        <span className="text-xl font-display font-bold text-slate-900 dark:text-white">Zavri</span>
+                        <span className="text-xl font-display font-bold text-slate-900 dark:text-slate-50">Zavri</span>
                     </div>
                     <div className="flex items-center gap-4">
                         <button
@@ -29,14 +29,14 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
                         </button>
                         <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1"></div>
                         <button
-                            onClick={onStart}
-                            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold text-sm transition-colors px-4 py-2"
+                            onClick={() => onStart('signin')}
+                            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 font-bold text-sm transition-colors px-4 py-2"
                         >
                             Нэвтрэх
                         </button>
                         <button
-                            onClick={onStart}
-                            className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-xl shadow-slate-200 dark:shadow-none hover:scale-105 active:scale-95 transition-all"
+                            onClick={() => onStart('signup')}
+                            className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-sm hover:scale-105 active:scale-95 transition-all"
                         >
                             Бүртгүүлэх
                         </button>
@@ -48,11 +48,11 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
             <section className="pt-32 pb-20 px-6">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div className="animate-slide-up">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-400 text-xs font-bold uppercase tracking-widest mb-8 border border-primary-100 dark:border-primary-900/30">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 text-xs font-bold uppercase tracking-widest mb-8 border border-primary-100 dark:border-primary-900/30">
                             <Sparkles size={14} />
                             Монголын анхны сургалтын платформ
                         </div>
-                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-black text-slate-950 dark:text-white mb-8 leading-[1.1] tracking-tight">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-black text-slate-900 dark:text-slate-50 mb-8 leading-[1.1] tracking-tight">
                             Мэдлэгээ <span className="text-primary-600 italic">хялбархан</span> <br />
                             өргөтгөх боломж
                         </h1>
@@ -68,8 +68,8 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
                                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                             </button>
                             <button
-                                onClick={onStart}
-                                className="px-6 sm:px-8 py-4 sm:py-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95"
+                                onClick={() => onStart('signup')}
+                                className="px-6 sm:px-8 py-4 sm:py-5 bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-50 border border-slate-300 dark:border-slate-700 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-300 dark:hover:bg-slate-700 transition-all active:scale-95"
                             >
                                 Бүртгэл үүсгэх
                             </button>
@@ -91,7 +91,7 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
 
                     <div className="relative animate-fade-in group">
                         <div className="absolute -inset-4 bg-gradient-to-tr from-primary-500/10 to-purple-500/10 rounded-[3rem] blur-3xl"></div>
-                        <div className="relative bg-white dark:bg-slate-900 p-8 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-2xl dark:shadow-none overflow-hidden">
+                        <div className="relative bg-slate-50 dark:bg-slate-900 p-8 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-none overflow-hidden">
                             <div className="aspect-[4/3] bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center relative overflow-hidden">
                                 <img
                                     src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop"
@@ -99,8 +99,8 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
                                     alt="Learning Hero"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 dark:from-slate-950/60 via-transparent to-transparent"></div>
-                                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-4 sm:p-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-xl">
-                                    <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white mb-1">Фэйсбүүкт хэрхэн аюулгүй нэвтрэх вэ?</h3>
+                                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-4 sm:p-6 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-xl">
+                                    <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-slate-50 mb-1">Фэйсбүүкт хэрхэн аюулгүй нэвтрэх вэ?</h3>
                                     <div className="flex items-center gap-2">
                                         <span className="text-[10px] sm:text-xs font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 rounded">Үнэгүй</span>
                                         <span className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500">12 минутын хичээл</span>
@@ -122,11 +122,11 @@ export function LandingPage({ onStart, onTryFree, darkMode, onToggleTheme }: Lan
                             { icon: <Globe className="text-purple-500" />, title: "Мэргэжлийн", desc: "Шалгагдсан агуулга" }
                         ].map((f, i) => (
                             <div key={i} className="flex gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                                <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
                                     {f.icon}
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-slate-900 dark:text-white mb-1">{f.title}</h4>
+                                    <h4 className="font-bold text-slate-900 dark:text-slate-50 mb-1">{f.title}</h4>
                                     <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{f.desc}</p>
                                 </div>
                             </div>

@@ -24,6 +24,11 @@ function App() {
     const [isLoading, setIsLoading] = useState(true)
     const [globalError, setGlobalError] = useState<string | null>(null)
 
+    // Role checks
+    const isReallyAdmin = user?.role === 'admin' || user?.isAdmin === true || user?.admin === true;
+    const isTeacher = user?.role === 'teacher';
+    const isModerator = user?.role === 'moderator';
+
     // Theme state — reads from localStorage on init
     const [darkMode, setDarkMode] = useState<boolean>(() => {
         const stored = localStorage.getItem('theme')
@@ -83,8 +88,7 @@ function App() {
     useEffect(() => {
         if (view === 'app') {
             fetchLessons()
-            const isAdmin = user?.role === 'admin' || user?.isAdmin === true || user?.admin === true;
-            if (activeTab === 'admin' && isAdmin) {
+            if (activeTab === 'admin' && isReallyAdmin) {
                 fetchUsers()
                 fetchReports()
             }
@@ -92,7 +96,7 @@ function App() {
                 fetchReports()
             }
         }
-    }, [view, activeTab, user])
+    }, [view, activeTab, user, isReallyAdmin])
 
     const fetchLessons = async () => {
         try {
@@ -108,8 +112,7 @@ function App() {
     }
 
     const fetchUsers = async () => {
-        const isAdmin = user?.role === 'admin' || user?.isAdmin === true || user?.admin === true;
-        if (!isAdmin) return;
+        if (!isReallyAdmin) return;
         setIsUsersLoading(true)
         try {
             const users = await getAllUsers()
@@ -462,17 +465,17 @@ function App() {
                                 >
                                     Нүүр
                                 </button>
-                                {(user?.role === 'admin' || user?.role === 'teacher' || user?.isAdmin === true || user?.admin === true) && (
+                                {(isReallyAdmin || isTeacher) && (
                                     <button
                                         onClick={() => setActiveTab('admin')}
                                         className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${activeTab === 'admin' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
                                     >
                                         <LayoutDashboard size={14} className="sm:w-4 sm:h-4" />
-                                        <span>{(user?.role === 'admin' || user?.isAdmin === true || user?.admin === true) ? 'Админ' : 'Багш'}</span>
+                                        <span>{isReallyAdmin ? 'Админ' : 'Багш'}</span>
                                     </button>
                                 )}
 
-                                {(user?.role === 'moderator' && !(user?.role === 'admin' || user?.isAdmin === true || user?.admin === true)) && (
+                                {(isModerator && !isReallyAdmin) && (
                                     <button
                                         onClick={() => setActiveTab('moderation')}
                                         className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${activeTab === 'moderation' ? 'bg-rose-600 text-white shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
@@ -565,7 +568,7 @@ function App() {
                                     )}
                                 </div>
                             </div>
-                        ) : activeTab === 'admin' && (user?.role === 'admin' || user?.isAdmin === true || user?.admin === true) ? (
+                        ) : activeTab === 'admin' && isReallyAdmin ? (
                             <div className="animate-fade-in text-slate-900 dark:text-slate-50">
                                 <div className="mb-12">
                                     <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight">Админ Самвар</h2>

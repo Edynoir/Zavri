@@ -83,11 +83,16 @@ function App() {
     useEffect(() => {
         if (view === 'app') {
             fetchLessons()
-            if (activeTab === 'admin') {
+            const isAdmin = user?.role === 'admin' || user?.isAdmin === true || user?.admin === true;
+            if (activeTab === 'admin' && isAdmin) {
                 fetchUsers()
+                fetchReports()
+            }
+            if (activeTab === 'moderation') {
+                fetchReports()
             }
         }
-    }, [view, activeTab])
+    }, [view, activeTab, user])
 
     const fetchLessons = async () => {
         try {
@@ -103,7 +108,8 @@ function App() {
     }
 
     const fetchUsers = async () => {
-        if (user?.role !== 'admin') return
+        const isAdmin = user?.role === 'admin' || user?.isAdmin === true || user?.admin === true;
+        if (!isAdmin) return;
         setIsUsersLoading(true)
         try {
             const users = await getAllUsers()
@@ -456,17 +462,17 @@ function App() {
                                 >
                                     Нүүр
                                 </button>
-                                {(user?.role === 'admin' || user?.role === 'teacher') && (
+                                {(user?.role === 'admin' || user?.role === 'teacher' || user?.isAdmin === true || user?.admin === true) && (
                                     <button
                                         onClick={() => setActiveTab('admin')}
                                         className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${activeTab === 'admin' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
                                     >
                                         <LayoutDashboard size={14} className="sm:w-4 sm:h-4" />
-                                        <span>{user?.role === 'admin' ? 'Админ' : 'Багш'}</span>
+                                        <span>{(user?.role === 'admin' || user?.isAdmin === true || user?.admin === true) ? 'Админ' : 'Багш'}</span>
                                     </button>
                                 )}
 
-                                {(user?.role === 'admin' || user?.role === 'moderator') && (
+                                {(user?.role === 'moderator' && !(user?.role === 'admin' || user?.isAdmin === true || user?.admin === true)) && (
                                     <button
                                         onClick={() => setActiveTab('moderation')}
                                         className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${activeTab === 'moderation' ? 'bg-rose-600 text-white shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'}`}
@@ -559,7 +565,7 @@ function App() {
                                     )}
                                 </div>
                             </div>
-                        ) : activeTab === 'admin' && user?.role === 'admin' ? (
+                        ) : activeTab === 'admin' && (user?.role === 'admin' || user?.isAdmin === true || user?.admin === true) ? (
                             <div className="animate-fade-in text-slate-900 dark:text-slate-50">
                                 <div className="mb-12">
                                     <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight">Админ Самвар</h2>
@@ -758,14 +764,64 @@ function App() {
                                         )}
                                     </div>
                                 </div>
+
+                                {/* Integrated Reports Management for Admins */}
+                                <div className="mt-20 pt-20 border-t border-slate-200 dark:border-slate-800">
+                                    <div className="mb-12">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-10 h-10 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-xl flex items-center justify-center">
+                                                <ShieldAlert size={20} />
+                                            </div>
+                                            <h3 className="text-2xl font-bold">Мэдээлэгдсэн хичээлүүд</h3>
+                                        </div>
+                                        <p className="text-slate-500 dark:text-slate-400">Хэрэглэгчдээс ирсэн гомдол мэдээллийг эндээс хянах боломжтой.</p>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        {reports.map((report: any) => (
+                                            <div key={report.id} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
+                                                <div className="flex justify-between items-start mb-6">
+                                                    <div>
+                                                        <p className="text-xs font-bold text-rose-600 uppercase tracking-widest mb-2">Мэдээлсэн шалтгаан:</p>
+                                                        <p className="text-lg font-bold text-slate-900 dark:text-white">{report.reason}</p>
+                                                    </div>
+                                                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                                        report.status === 'approved' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400'
+                                                        }`}>
+                                                        {report.status}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                                                    <button
+                                                        onClick={() => handleUpdateReport(report.id, 'approved')}
+                                                        className="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold transition-all active:scale-[0.98]"
+                                                    >
+                                                        Зөвшөөрөх
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleUpdateReport(report.id, 'declined')}
+                                                        className="px-8 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-xs font-bold transition-all active:scale-[0.98]"
+                                                    >
+                                                        Татгалзах
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {reports.length === 0 && (
+                                            <div className="text-center py-20 bg-slate-50/50 dark:bg-slate-800/30 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-700">
+                                                <p className="text-slate-400 dark:text-slate-500 font-medium">Мэдээлэгдсэн хичээл байхгүй байна.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                        ) : activeTab === 'moderation' && (user?.role === 'admin' || user?.role === 'moderator') ? (
+                        ) : activeTab === 'moderation' && (user?.role === 'moderator') ? (
                             <div className="animate-fade-in text-slate-900 dark:text-white">
                                 <div className="mb-12">
                                     <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight">Модератор Самбар</h2>
                                     <p className="text-slate-500 dark:text-slate-400 mt-2">Мэдээлэгдсэн хичээлүүдийг хянах хэсэг</p>
                                 </div>
-
+                                {/* Original report management view */}
                                 <div className="space-y-6">
                                     {reports.map((report: any) => (
                                         <div key={report.id} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm">

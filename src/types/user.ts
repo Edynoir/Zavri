@@ -21,4 +21,5 @@ export interface UserData {
     streak: number;
     role: UserRole;
     isAdmin?: boolean;
+    admin?: boolean;
 }
